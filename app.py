@@ -13,18 +13,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Define DB Model for Todo table
+# Concept: model
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     complete = db.Column(db.Boolean)
 
 # Home page displaying todo list
+# Concept: routing
 @app.route('/')
 def home():
+    # Concept: database
     todo_list = Todo.query.all()
+    # Concept: template
     return render_template("base.html", todo_list=todo_list)
 
 # Add todo to DB and rerender homepage
+# Concept: routing
 @app.route("/add", methods=["POST"])
 def add():
     title = request.form.get("title")
@@ -34,6 +39,7 @@ def add():
     return redirect(url_for("home"))
 
 # Update todo in DB and rerender homepage
+# Concept: routing
 @app.route("/update/<int:todo_id>")
 def update(todo_id):
     todo = Todo.query.filter_by(id=todo_id).first()
@@ -42,8 +48,10 @@ def update(todo_id):
     return redirect(url_for("home"))
 
 # Delete todo from DB and rerender homepage
+# Concept: routing
 @app.route("/delete/<int:todo_id>")
 def delete(todo_id):
+    # Concept: database
     todo = Todo.query.filter_by(id=todo_id).first()
     db.session.delete(todo)
     db.session.commit()
@@ -54,4 +62,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     
-    app.run(debug=True)
+    app.run(debug=True) # Concept: debugger
